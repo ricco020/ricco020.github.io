@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VPN security testing — open source tools and references</title>
+<meta name="description" content="Open source CLI and browser tools for testing VPN integrity: DNS leak detection, WebRTC leak detection, VPN speed benchmarking. Methodologies and companion guides." />
+<link rel="canonical" href="https://ricco020.github.io/" />
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1.2rem; color: #222; background: #fafafa; }
+  @media (prefers-color-scheme: dark) { body { background: #1a1a1a; color: #ddd; } a { color: #6cf; } }
+  h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  h2 { font-size: 1.3rem; margin-top: 2.5rem; border-bottom: 1px solid #999; padding-bottom: 0.3rem; }
+  h3 { font-size: 1.05rem; margin-top: 1.6rem; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 2rem; }
+  .tool-card { border: 1px solid #ccc; padding: 1rem; border-radius: 8px; margin-top: 1rem; background: white; }
+  @media (prefers-color-scheme: dark) { .tool-card { background: #222; border-color: #444; } }
+  .tool-card h3 { margin-top: 0; }
+  .badges { display: flex; gap: 0.4rem; flex-wrap: wrap; font-size: 0.85rem; margin: 0.5rem 0; }
+  .badge { background: #eee; padding: 0.15rem 0.6rem; border-radius: 3px; }
+  @media (prefers-color-scheme: dark) { .badge { background: #333; } }
+  code { background: #f0f0f0; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.9em; }
+  @media (prefers-color-scheme: dark) { code { background: #2a2a2a; } }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #999; font-size: 0.9rem; color: #666; }
+</style>
+</head>
+<body>
+
+<h1>VPN security testing</h1>
+<p class="subtitle">Open source tools and references for verifying VPN integrity — DNS leaks, WebRTC leaks, throughput overhead.</p>
+
+<h2>Why this exists</h2>
+<p>Most "VPN leak testers" you find online either ship heavy analytics scripts or hide their methodology. The tools listed here all share three properties: <strong>zero dependencies, MIT license, auditable in under 15 minutes</strong>. They were built to complement the in-depth methodology write-ups maintained at <a href="https://www.anonymflow.com">anonymflow.com</a> — independent VPN and privacy tooling research.</p>
+<p>Whether you are a developer integrating leak checks into a CI pipeline, a security professional auditing a VPN provider, or just a user wanting to verify your tunnel actually does what it claims, these tools are useful as-is.</p>
+
+<h2>Tools</h2>
+
+<div class="tool-card">
+  <h3><a href="https://github.com/ricco020/dns-leak-detector-cli">dns-leak-detector-cli</a></h3>
+  <div class="badges">
+    <span class="badge">Python 3.8+</span><span class="badge">CLI</span><span class="badge">MIT</span><span class="badge">Zero deps</span>
+  </div>
+  <p>Command-line DNS leak detector. Probes the OS-level resolver via <code>getaddrinfo()</code> plus an external probe domain, then compares each detected resolver's ASN against your expected VPN provider. Detects Windows SMHNR leaks, IPv6 leaks, and ISP-resolver fallback that web testers commonly miss. Cron-ready with exit-code thresholds.</p>
+  <p>Companion methodology: <a href="https://www.anonymflow.com/en/blog/dns-leak-test">Test a DNS leak in 2 minutes — complete methodology</a>.</p>
+</div>
+
+<div class="tool-card">
+  <h3><a href="https://github.com/ricco020/webrtc-leak-detector">webrtc-leak-detector</a></h3>
+  <div class="badges">
+    <span class="badge">HTML</span><span class="badge">Browser only</span><span class="badge">MIT</span><span class="badge">No tracking</span>
+  </div>
+  <p>Single HTML file (12 KB) that detects WebRTC IP leaks in your browser. Runs entirely client-side via <code>RTCPeerConnection</code> probing. Classifies each ICE candidate as loopback / local / mDNS-obfuscated / public, then cross-checks with an HTTP-egress lookup to flag real leaks.</p>
+  <p>Open the file locally or host it anywhere. No analytics, no third-party scripts, auditable in 10 minutes.</p>
+</div>
+
+<div class="tool-card">
+  <h3><a href="https://github.com/ricco020/vpn-speed-tester">vpn-speed-tester</a></h3>
+  <div class="badges">
+    <span class="badge">Python 3.8+</span><span class="badge">CLI</span><span class="badge">MIT</span><span class="badge">Cron-ready</span>
+  </div>
+  <p>CLI that measures VPN overhead on download, upload, latency, and jitter. Baseline-vs-VPN comparison persisted to disk. Threshold-based exit codes for cron monitoring (alert when overhead exceeds a configurable percentage).</p>
+  <p>Companion methodology: <a href="https://www.anonymflow.com/en/blog/real-world-vpn-speed-test">Real-world VPN speed test methodology</a>. Dataset: <a href="https://www.anonymflow.com/en/blog/study-vpn-streaming-2026-95-test-sessions">95-session VPN streaming study</a>.</p>
+</div>
+
+<h2>Methodology references</h2>
+<p>Every tool above is distilled from a longer methodology write-up. The full references are maintained at AnonymFlow:</p>
+<ul>
+  <li><a href="https://www.anonymflow.com/en/blog/dns-leak-test">DNS + WebRTC leak detection methodology</a></li>
+  <li><a href="https://www.anonymflow.com/en/blog/complete-vpn-security-audit">Complete VPN security audit — 9 tests</a></li>
+  <li><a href="https://www.anonymflow.com/en/blog/public-wifi-risks-2026">Public WiFi risks 2026</a></li>
+  <li><a href="https://www.anonymflow.com/en/blog/real-world-vpn-speed-test">Real-world VPN speed test methodology</a></li>
+  <li><a href="https://www.anonymflow.com/en/blog/study-vpn-streaming-2026-95-test-sessions">95-session VPN streaming study</a> (also archived on <a href="https://zenodo.org/record/20465371">Zenodo with DOI 10.5281/zenodo.20465371</a>)</li>
+  <li><a href="https://www.anonymflow.com/en/methodology">Full testing methodology</a></li>
+</ul>
+
+<h2>Affiliation disclosure</h2>
+<p>These tools are released under MIT license and were built and are maintained by the same team behind <a href="https://www.anonymflow.com">AnonymFlow</a>, an independent VPN and privacy research site. AnonymFlow operates affiliate partnerships with several VPN providers covered in its reviews — the testing methodologies linked above include a dedicated section on how those conflicts are addressed.</p>
+
+<footer>
+  <p>Source: <a href="https://github.com/ricco020/ricco020.github.io">github.com/ricco020/ricco020.github.io</a> — MIT licensed.</p>
+  <p>Last updated 2026-05-31.</p>
+</footer>
+
+</body>
+</html>
