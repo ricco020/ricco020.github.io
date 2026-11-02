@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VPN security testing — open source tools and references</title>
+<title>VPN security testing: open source tools and references</title>
 <meta name="description" content="Open source CLI and browser tools for testing VPN integrity: DNS leak detection, WebRTC leak detection, VPN speed benchmarking. Methodologies and companion guides." />
 <link rel="canonical" href="https://ricco020.github.io/" />
 <style>
@@ -22,16 +22,18 @@
   @media (prefers-color-scheme: dark) { .badge { background: #333; } }
   code { background: #f0f0f0; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.9em; }
   @media (prefers-color-scheme: dark) { code { background: #2a2a2a; } }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  th, td { border: 1px solid #999; padding: 0.3rem 0.5rem; text-align: left; }
   footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #999; font-size: 0.9rem; color: #666; }
 </style>
 </head>
 <body>
 
 <h1>VPN security testing</h1>
-<p class="subtitle">Open source tools and references for verifying VPN integrity — DNS leaks, WebRTC leaks, throughput overhead.</p>
+<p class="subtitle">Open source tools and references for verifying VPN integrity: DNS leaks, WebRTC leaks, throughput overhead.</p>
 
 <h2>Why this exists</h2>
-<p>Most "VPN leak testers" you find online either ship heavy analytics scripts or hide their methodology. The tools listed here all share three properties: <strong>zero dependencies, MIT license, auditable in under 15 minutes</strong>. They were built to complement the in-depth methodology write-ups maintained at <a href="https://www.anonymflow.com">anonymflow.com</a> — independent VPN and privacy tooling research.</p>
+<p>Most "VPN leak testers" you find online either ship heavy analytics scripts or hide their methodology. The tools listed here all share three properties: <strong>zero dependencies, MIT license, auditable in under 15 minutes</strong>. They were built to complement the in-depth methodology write-ups maintained at <a href="https://www.anonymflow.com">anonymflow.com</a>, independent VPN and privacy tooling research.</p>
 <p>Whether you are a developer integrating leak checks into a CI pipeline, a security professional auditing a VPN provider, or just a user wanting to verify your tunnel actually does what it claims, these tools are useful as-is.</p>
 
 <h2>Tools</h2>
@@ -42,7 +44,7 @@
     <span class="badge">Python 3.8+</span><span class="badge">CLI</span><span class="badge">MIT</span><span class="badge">Zero deps</span>
   </div>
   <p>Command-line DNS leak detector. Probes the OS-level resolver via <code>getaddrinfo()</code> plus an external probe domain, then compares each detected resolver's ASN against your expected VPN provider. Detects Windows SMHNR leaks, IPv6 leaks, and ISP-resolver fallback that web testers commonly miss. Cron-ready with exit-code thresholds.</p>
-  <p>Companion methodology: <a href="https://www.anonymflow.com/en/blog/dns-leak-test">Test a DNS leak in 2 minutes — complete methodology</a>.</p>
+  <p>Companion methodology: <a href="https://www.anonymflow.com/en/blog/dns-leak-test">Test a DNS leak in 2 minutes: complete methodology</a>.</p>
 </div>
 
 <div class="tool-card">
@@ -63,11 +65,24 @@
   <p>Companion methodology: <a href="https://www.anonymflow.com/en/blog/real-world-vpn-speed-test">Real-world VPN speed test methodology</a>. Dataset: <a href="https://www.anonymflow.com/en/blog/study-vpn-streaming-2026-95-test-sessions">95-session VPN streaming study</a>.</p>
 </div>
 
+<h2>Measured: what DNS over HTTPS actually costs</h2>
+<p>One evening of timing from a datacenter VPS (Contabo, AS51167, France), 1 November 2026: 3 resolvers, 3 runs each, 5 queries per HTTP/2 connection, 45 queries in total (<code>example.com A</code>, RFC 8484 wire format, curl 8.5.0).</p>
+<table>
+<thead><tr><th>Resolver</th><th>1st query (3 runs)</th><th>Warm queries, median</th></tr></thead>
+<tbody>
+<tr><td>Cloudflare</td><td>47.6 / 28.3 / 28.9 ms</td><td>4.8 ms</td></tr>
+<tr><td>Google</td><td>36.1 / 39.0 / 49.9 ms</td><td>5.6 ms</td></tr>
+<tr><td>Quad9</td><td>39.8 / 38.0 / 52.4 ms</td><td>7.7 ms</td></tr>
+</tbody>
+</table>
+<p>The first query pays for the TLS handshake (finished 24 to 41 ms after the start); once the connection is open, a lookup costs a few milliseconds. The cost of DoH is per connection, not per query. Same evening, <code>dig @9.9.9.9 isitblocked.org</code> returned NXDOMAIN: Quad9's filter canary is live. Limits: one vantage point, one cached domain, no home ISP path, no HTTP/3. Full write-up with the curl command: <a href="https://dev.to/ricco020/doh-costs-one-tls-handshake-then-almost-nothing-45-timed-queries-to-cloudflare-google-and-quad9-14h6">dev.to</a>. To turn DoH on in Chrome, Firefox, Edge, Brave and Safari: <a href="https://www.anonymflow.com/en/blog/dns-over-https-browser-setup-2026">DNS over HTTPS browser setup guide</a>.</p>
+
 <h2>Methodology references</h2>
 <p>Every tool above is distilled from a longer methodology write-up. The full references are maintained at AnonymFlow:</p>
 <ul>
   <li><a href="https://www.anonymflow.com/en/blog/dns-leak-test">DNS + WebRTC leak detection methodology</a></li>
-  <li><a href="https://www.anonymflow.com/en/blog/complete-vpn-security-audit">Complete VPN security audit — 9 tests</a></li>
+  <li><a href="https://www.anonymflow.com/en/blog/dns-over-https-browser-setup-2026">DNS over HTTPS: browser setup</a></li>
+  <li><a href="https://www.anonymflow.com/en/blog/complete-vpn-security-audit">Complete VPN security audit, 9 tests</a></li>
   <li><a href="https://www.anonymflow.com/en/blog/public-wifi-risks-2026">Public WiFi risks 2026</a></li>
   <li><a href="https://www.anonymflow.com/en/blog/real-world-vpn-speed-test">Real-world VPN speed test methodology</a></li>
   <li><a href="https://www.anonymflow.com/en/blog/study-vpn-streaming-2026-95-test-sessions">95-session VPN streaming study</a> (also archived on <a href="https://zenodo.org/record/20465371">Zenodo with DOI 10.5281/zenodo.20465371</a>)</li>
@@ -75,11 +90,11 @@
 </ul>
 
 <h2>Affiliation disclosure</h2>
-<p>These tools are released under MIT license and were built and are maintained by the same team behind <a href="https://www.anonymflow.com">AnonymFlow</a>, an independent VPN and privacy research site. AnonymFlow operates affiliate partnerships with several VPN providers covered in its reviews — the testing methodologies linked above include a dedicated section on how those conflicts are addressed.</p>
+<p>These tools are released under MIT license and were built and are maintained by the same team behind <a href="https://www.anonymflow.com">AnonymFlow</a>, an independent VPN and privacy research site. AnonymFlow operates affiliate partnerships with several VPN providers covered in its reviews: the testing methodologies linked above include a dedicated section on how those conflicts are addressed.</p>
 
 <footer>
-  <p>Source: <a href="https://github.com/ricco020/ricco020.github.io">github.com/ricco020/ricco020.github.io</a> — MIT licensed.</p>
-  <p>Last updated 2026-05-31.</p>
+  <p>Source: <a href="https://github.com/ricco020/ricco020.github.io">github.com/ricco020/ricco020.github.io</a>. MIT licensed.</p>
+  <p>Last updated 2026-11-02.</p>
 </footer>
 
 </body>
