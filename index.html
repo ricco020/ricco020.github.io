@@ -65,6 +65,19 @@
   <p>Companion methodology: <a href="https://www.anonymflow.com/en/blog/real-world-vpn-speed-test">Real-world VPN speed test methodology</a>. Dataset: <a href="https://www.anonymflow.com/en/blog/study-vpn-streaming-2026-95-test-sessions">95-session VPN streaming study</a>.</p>
 </div>
 
+<h2>Browser tools and curated lists</h2>
+<p>Hosted versions that run in the browser, plus reading lists. Each page states what it does and does not test.</p>
+<ul>
+  <li><a href="https://ricco020.github.io/vpn-leak-guard/">VPN Leak Guard</a>: free Chrome extension that checks WebRTC, DNS and IP exposure and can block WebRTC leaks on websites (extension pages are exempt from that Chrome policy, measured and documented).</li>
+  <li><a href="https://ricco020.github.io/webrtc-leak-detector/">WebRTC leak detector</a>: single-file page that lists the ICE candidates your browser exposes while the VPN is on.</li>
+  <li><a href="https://ricco020.github.io/edns-resolver-probe/">EDNS resolver probe</a>: names the DNS resolver that really answered, and uses EDNS Client Subnet to separate a real leak from an anycast artefact.</li>
+  <li><a href="https://ricco020.github.io/browser-privacy-check/">Browser privacy check</a>: the signals your browser sends to every site, computed client-side.</li>
+  <li><a href="https://ricco020.github.io/wireguard-config-generator/">WireGuard config generator</a>: server and client configs with X25519 keys generated in the browser.</li>
+  <li><a href="https://ricco020.github.io/wireguard-quick-reference/">WireGuard quick reference</a>: keys, minimal wg0.conf, AllowedIPs overlap and MTU pitfalls.</li>
+  <li><a href="https://ricco020.github.io/awesome-vpn-leak-detection/">Awesome VPN leak detection</a>: curated list, every entry opened and checked on 19 November 2026.</li>
+  <li><a href="https://ricco020.github.io/awesome-self-host-vpn/">Awesome self-host VPN</a>: curated list of tools and guides to run your own VPN on a VPS.</li>
+</ul>
+
 <h2>Measured: what DNS over HTTPS actually costs</h2>
 <p>One evening of timing from a datacenter VPS (Contabo, AS51167, France), 1 November 2026: 3 resolvers, 3 runs each, 5 queries per HTTP/2 connection, 45 queries in total (<code>example.com A</code>, RFC 8484 wire format, curl 8.5.0).</p>
 <table>
